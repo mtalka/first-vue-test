@@ -13,17 +13,24 @@
         ></v-text-field>
       </v-col>
     </v-row>
-    <v-row v-if="playerName">
+    <!-- <v-row v-if="playerName"> -->
+    <v-row>
+      <BalancedRating
+        v-bind:kdAverage="kdAvg"
+        v-bind:eloAverage="eloAvg"
+        v-bind:loading="loading"
+      />
       <AverageKd
         v-bind:kdAverage="kdAvg"
         v-bind:matchCount="matchCount"
-        v-bind:playerName="playerName"
+        v-bind:playerName="$store.state.player.playerName"
+        v-bind:eloAvg="eloAvg"
+        v-bind:loading="loading"
       />
-      <BalancedRating v-bind:kdAverage="kdAvg" v-bind:eloAverage="eloAvg" />
+      <AdditionalStats />
     </v-row>
     <v-row class="text-center" v-if="!playerName">
-      <v-col>
-      Input a FaceIt username to get balanced K/D ratio.</v-col>
+      <v-col>Input a FaceIt username to get balanced K/D ratio and BalancedKD score.</v-col>
     </v-row>
   </v-container>
 </template>
@@ -31,14 +38,15 @@
 <script>
 import AverageKd from "@/components/AverageKd";
 import BalancedRating from "@/components/BalancedRating";
-import axios from "axios";
+import AdditionalStats from "@/components/AdditionalStats";
 
 export default {
   name: "Home",
 
   components: {
     AverageKd,
-    BalancedRating
+    BalancedRating,
+    AdditionalStats
   },
 
   data: () => ({
@@ -47,36 +55,30 @@ export default {
     kdAvg: 0,
     eloAvg: 0,
     kds: [],
-    // API KEY GOES HERE
     playerName: ""
   }),
+  mounted() {
+    if (this.matches) {
+      this.kdMappings();
+    }
+  },
   methods: {
     searchPlayer(searchParameter) {
-      axios
-        .get(
-          `https://open.faceit.com/data/v4/players?nickname=${searchParameter}`,
-          {
-            headers: {
-              Authorization: `Bearer ${this.apiKey}`
-            }
-          }
-        )
-        .then(response => {
-          this.fetchMatches(response.data.player_id);
-          this.playerName = response.data.nickname;
+      this.loading = true;
+      this.$store
+        .dispatch("fetchStats", searchParameter)
+        .then(() => {
+          this.kdMappings();
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
-    fetchMatches(playerId) {
-      axios
-        .get(
-          `https://api.faceit.com/stats/api/v1/stats/time/users/${playerId}/games/csgo?size=2000`
-        )
-        .then(response => {
-          this.kds = response.data.map(d => d.c2);
-          const elos = response.data.map(d => !isNaN(d.elo) && Number(d.elo));
-          this.eloAvg = (elos.reduce((a, b) => a + b, 0) / elos.length).toFixed(0);
-        })
-        .then(() => this.countKd());
+    kdMappings() {
+      this.kds = this.matches.map(m => m.c2);
+      const elos = this.matches.map(d => !isNaN(d.elo) && Number(d.elo));
+      this.eloAvg = (elos.reduce((a, b) => a + b, 0) / elos.length).toFixed();
+      this.countKd();
     },
     countKd() {
       const numberKds = this.kds.map(i => Number(i)).sort();
@@ -91,6 +93,14 @@ export default {
       ).toFixed(2);
 
       this.matchCount = numberKds.length;
+    }
+  },
+  computed: {
+    matches() {
+      return this.$store.state.matches;
+    },
+    playerName() {
+      return this.$store.state.player.playerName;
     }
   }
 };

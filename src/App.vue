@@ -27,7 +27,7 @@
       <router-link :to="nextRouteName">
         <v-btn text>
           <v-icon>
-            {{ currentRouteName === "Home" ? "mdi-information" : "mdi-home" }}
+            {{ currentRouteName === "Home" ? "mdi-information mdi-36px" : "mdi-home mdi-36px" }}
           </v-icon>
          </v-btn>
       </router-link>
