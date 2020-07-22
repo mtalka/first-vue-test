@@ -5,9 +5,9 @@
         <v-skeleton-loader :loading="loading" height="110" type="image">
           <v-card outlined>
             <v-card-text>
-              BalancedKD score is
-              <span class="small-highlight">{{ (Number(eloAverage) * Number(kdAverage)).toFixed(0) }}</span>
+              BalancedKD score is <span class="small-highlight">{{ countScore }}</span>
             </v-card-text>
+              <div class="verdict">{{ verdict }}</div>
             <v-rating
               :value="countRating"
               color="yellow darken-3"
@@ -31,6 +31,25 @@ export default {
   computed: {
     countRating() {
       return (Number(this.eloAverage) * Number(this.kdAverage)) / 400;
+    },
+    countScore() {
+      return (Number(this.eloAverage) * Number(this.kdAverage)).toFixed(0);
+    },
+    verdict() {
+      const score = this.countScore;
+      if (score > 2999) {
+        return "Perfect";
+      } else if (score > 1999) {
+        return "Excellent";
+      } else if (score > 1499) {
+        return "Good";
+      } else if (score > 999) {
+        return "Fair";
+      } else if (score > 799) {
+        return "Poor";
+      } else {
+        return "Horrible";
+      }
     }
   }
 };
@@ -39,5 +58,10 @@ export default {
 <style scoped>
 .small-highlight {
   font-weight: 600;
+}
+
+.verdict {
+  font-weight: 600;
+  font-size: 1.5rem;
 }
 </style>

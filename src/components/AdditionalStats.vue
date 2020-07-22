@@ -59,7 +59,8 @@
 
 <script>
 export default {
-  name: "AdditionalStats"
+  name: "AdditionalStats",
+  props: ["loading"],
 };
 </script>
 

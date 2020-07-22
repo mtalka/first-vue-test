@@ -13,13 +13,9 @@
         ></v-text-field>
       </v-col>
     </v-row>
-    <!-- <v-row v-if="playerName"> -->
-    <v-row>
-      <BalancedRating
-        v-bind:kdAverage="kdAvg"
-        v-bind:eloAverage="eloAvg"
-        v-bind:loading="loading"
-      />
+    <v-row v-if="playerToSearch">
+      <!-- <v-row> -->
+      <BalancedRating v-bind:kdAverage="kdAvg" v-bind:eloAverage="eloAvg" v-bind:loading="loading" />
       <AverageKd
         v-bind:kdAverage="kdAvg"
         v-bind:matchCount="matchCount"
@@ -27,9 +23,11 @@
         v-bind:eloAvg="eloAvg"
         v-bind:loading="loading"
       />
-      <AdditionalStats />
+      <AdditionalStats 
+        v-bind:loading="loading"
+        />
     </v-row>
-    <v-row class="text-center" v-if="!playerName">
+    <v-row class="text-center" v-if="!$store.state.player.playerName">
       <v-col>Input a FaceIt username to get balanced K/D ratio and BalancedKD score.</v-col>
     </v-row>
   </v-container>
@@ -51,48 +49,16 @@ export default {
 
   data: () => ({
     playerToSearch: "",
-    matchCount: 0,
-    kdAvg: 0,
-    eloAvg: 0,
-    kds: [],
-    playerName: ""
+    loading: false
   }),
-  mounted() {
-    if (this.matches) {
-      this.kdMappings();
-    }
-  },
   methods: {
     searchPlayer(searchParameter) {
       this.loading = true;
       this.$store
         .dispatch("fetchStats", searchParameter)
-        .then(() => {
-          this.kdMappings();
-        })
         .finally(() => {
           this.loading = false;
         });
-    },
-    kdMappings() {
-      this.kds = this.matches.map(m => m.c2);
-      const elos = this.matches.map(d => !isNaN(d.elo) && Number(d.elo));
-      this.eloAvg = (elos.reduce((a, b) => a + b, 0) / elos.length).toFixed();
-      this.countKd();
-    },
-    countKd() {
-      const numberKds = this.kds.map(i => Number(i)).sort();
-
-      if (numberKds.length >= 10) {
-        const spliceLength = Number((numberKds.length / 10).toFixed(0));
-        numberKds.splice(0, spliceLength);
-        numberKds.splice(numberKds.length - spliceLength, spliceLength);
-      }
-      this.kdAvg = (
-        numberKds.reduce((a, b) => a + b, 0) / numberKds.length
-      ).toFixed(2);
-
-      this.matchCount = numberKds.length;
     }
   },
   computed: {
@@ -101,6 +67,34 @@ export default {
     },
     playerName() {
       return this.$store.state.player.playerName;
+    },
+    kdAvg() {
+      const kds = this.matches.map(m => m.c2);
+      const numberKds = kds.map(i => Number(i)).sort();
+
+      if (numberKds.length >= 10) {
+        const spliceLength = Number((numberKds.length / 10).toFixed(0));
+        numberKds.splice(0, spliceLength);
+        numberKds.splice(numberKds.length - spliceLength, spliceLength);
+      }
+      return (numberKds.reduce((a, b) => a + b, 0) / numberKds.length).toFixed(
+        2
+      );
+    },
+    eloAvg() {
+      const elos = this.matches.map(d => !isNaN(d.elo) && Number(d.elo));
+      return (elos.reduce((a, b) => a + b, 0) / elos.length).toFixed();
+    },
+    matchCount() {
+      const kds = this.matches.map(m => m.c2);
+      const numberKds = kds.map(i => Number(i)).sort();
+
+      if (numberKds.length >= 10) {
+        const spliceLength = Number((numberKds.length / 10).toFixed(0));
+        numberKds.splice(0, spliceLength);
+        numberKds.splice(numberKds.length - spliceLength, spliceLength);
+      }
+      return numberKds.length;
     }
   }
 };
