@@ -13,23 +13,40 @@
         ></v-text-field>
       </v-col>
     </v-row>
-    <v-row v-if="playerToSearch">
-      <!-- <v-row> -->
-      <BalancedRating v-bind:kdAverage="kdAvg" v-bind:eloAverage="eloAvg" v-bind:loading="loading" />
+    <v-row v-if="loading">
+      <v-col xs="12" xl="6" offset-xl="3">
+        <v-col>
+          <v-skeleton-loader :loading="loading" height="120" type="image"
+        /></v-col>
+        <v-col>
+          <v-skeleton-loader :loading="loading" height="200" type="image"
+        /></v-col>
+        <v-col>
+          <v-skeleton-loader :loading="loading" height="120" type="image"
+        /></v-col>
+        <v-col>
+          <v-skeleton-loader :loading="loading" height="120" type="image"
+        /></v-col>
+      </v-col>
+    </v-row>
+    <v-row v-if="$store.state.player.playerName && loading === false">
+      <BalancedRating v-bind:kdAverage="kdAvg" v-bind:eloAverage="eloAvg" />
       <AverageKd
         v-bind:kdAverage="kdAvg"
         v-bind:matchCount="matchCount"
         v-bind:playerName="$store.state.player.playerName"
         v-bind:eloAvg="eloAvg"
-        v-bind:loading="loading"
       />
-      <AdditionalStats 
-        v-bind:loading="loading"
-        />
+      <AdditionalStats />
     </v-row>
-    <v-row class="text-center" v-if="!$store.state.player.playerName">
-      <v-col>Input a FaceIt username to get balanced K/D ratio and BalancedKD score.</v-col>
+    <v-row class="text-center" v-if="!$store.state.player.playerName && loading === false">
+      <v-col>
+        Input a FaceIt name to get balanced K/D ratio and score.
+      </v-col>
     </v-row>
+    <v-snackbar v-model="snackbar" :timeout="4000" :top="true">
+      Player not found
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -49,16 +66,16 @@ export default {
 
   data: () => ({
     playerToSearch: "",
-    loading: false
+    loading: false,
+    snackbar: false
   }),
   methods: {
     searchPlayer(searchParameter) {
       this.loading = true;
       this.$store
         .dispatch("fetchStats", searchParameter)
-        .finally(() => {
-          this.loading = false;
-        });
+        .catch(() => this.snackbar = true)
+        .finally(() => (this.loading = false));
     }
   },
   computed: {

@@ -24,7 +24,7 @@
             contain
             v-if="!$vuetify.theme.dark"
             min-width="100"
-            src="https://developers.faceit.com/static/media/RGB-FACEIT-Logo-Dark.e445741d.jpg"
+            src="../assets/faceit_white_bg.jpg"
             width="400"
           />
           <v-img
@@ -33,7 +33,7 @@
             contain
             v-if="$vuetify.theme.dark"
             min-width="100"
-            src="https://developers.faceit.com/static/media/RGB-FACEIT-Logo-Bright.c3553633.png"
+            src="../assets/faceit_black_bg.png"
             width="400"
           />
         </div>

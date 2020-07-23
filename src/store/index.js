@@ -18,9 +18,11 @@ export default new Vuex.Store({
   actions: {
     fetchStats({ commit }, searchParameter) {
       return new Promise((resolve, reject) => {
+        const baseUrl = `/api/player/${searchParameter}`
         axios
-          .get(`http://localhost:3001/api/player/${searchParameter}`)
-          .then(result => commit("UPDATE_PLAYER", result.data), resolve())
+          .get(baseUrl)
+          .then(result => commit("UPDATE_PLAYER", result.data))
+          .then(() => resolve())
           .catch(error => {
             reject();
             throw new Error(`API ${error}`);
