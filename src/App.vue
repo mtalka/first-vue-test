@@ -18,16 +18,22 @@
             contain
             min-width="100"
             src="./assets/balancedkd-text.png"
-            width="200"
+            width="250"
           />
         </div>
       </router-link>
 
       <v-spacer></v-spacer>
-      <router-link :to="nextRouteName">
-        <v-btn text>
+      
+        <v-btn text outlined class="light-switch" @click="lightSwitch()">
           <v-icon>
-            {{ currentRouteName === "Home" ? "mdi-information mdi-36px" : "mdi-home mdi-36px" }}
+            mdi-brightness-6
+          </v-icon>
+         </v-btn>
+      <router-link :to="nextRouteName" class="text-decoration-none">
+        <v-btn text outlined>
+          <v-icon>
+            {{ currentRouteName === "Home" ? "mdi-information-outline mdi-24px" : "mdi-home mdi-24px" }}
           </v-icon>
          </v-btn>
       </router-link>
@@ -53,6 +59,17 @@ export default {
         return "/";
       }
     }
+  },
+  methods: {
+    lightSwitch() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+    }
   }
 };
 </script>
+
+<style scoped>
+.light-switch {
+  margin-right: .25rem;
+}
+</style>

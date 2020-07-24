@@ -7,45 +7,53 @@
           dense
           placeholder="Search player"
           append-icon="mdi-magnify"
+          append-outer-icon="mdi-trash-can-outline"
           v-model="playerToSearch"
           @click:append="searchPlayer(playerToSearch)"
+          @click:append-outer="discardPlayer()"
           @keydown.enter="searchPlayer(playerToSearch)"
         ></v-text-field>
       </v-col>
     </v-row>
-    <v-row v-if="loading">
+    <v-row dense v-if="loading">
       <v-col xs="12" xl="6" offset-xl="3">
         <v-col>
-          <v-skeleton-loader :loading="loading" height="120" type="image"
-        /></v-col>
+          <v-skeleton-loader :loading="loading" height="120" type="image" />
+        </v-col>
         <v-col>
-          <v-skeleton-loader :loading="loading" height="200" type="image"
-        /></v-col>
+          <v-skeleton-loader :loading="loading" height="200" type="image" />
+        </v-col>
         <v-col>
-          <v-skeleton-loader :loading="loading" height="120" type="image"
-        /></v-col>
+          <v-skeleton-loader :loading="loading" height="120" type="image" />
+        </v-col>
         <v-col>
-          <v-skeleton-loader :loading="loading" height="120" type="image"
-        /></v-col>
+          <v-skeleton-loader :loading="loading" height="120" type="image" />
+        </v-col>
       </v-col>
     </v-row>
     <v-row v-if="$store.state.player.playerName && loading === false">
-      <BalancedRating v-bind:kdAverage="kdAvg" v-bind:eloAverage="eloAvg" />
-      <AverageKd
-        v-bind:kdAverage="kdAvg"
-        v-bind:matchCount="matchCount"
-        v-bind:playerName="$store.state.player.playerName"
-        v-bind:eloAvg="eloAvg"
-      />
-      <AdditionalStats />
+      <v-row dense class="text-center">
+        <v-col xs="12" xl="6" offset-xl="3">
+          <h1>{{ $store.state.player.playerName }}</h1>
+          <BalancedRating v-bind:kdAverage="kdAvg" v-bind:eloAverage="eloAvg" />
+          <AverageKd
+            v-bind:kdAverage="kdAvg"
+            v-bind:matchCount="matchCount"
+            v-bind:playerName="$store.state.player.playerName"
+            v-bind:eloAvg="eloAvg"
+          />
+          <AdditionalStats />
+        </v-col>
+      </v-row>
     </v-row>
     <v-row class="text-center" v-if="!$store.state.player.playerName && loading === false">
-      <v-col>
-        Input a FaceIt name to get balanced K/D ratio and score.
-      </v-col>
+      <v-col class="input-guide">Input a FaceIt name to get balanced K/D ratio and score.</v-col>
     </v-row>
     <v-snackbar v-model="snackbar" :timeout="4000" :top="true">
       Player not found
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="snackbar = false">Close</v-btn>
+      </template>
     </v-snackbar>
   </v-container>
 </template>
@@ -74,8 +82,12 @@ export default {
       this.loading = true;
       this.$store
         .dispatch("fetchStats", searchParameter)
-        .catch(() => this.snackbar = true)
+        .catch(() => (this.snackbar = true))
         .finally(() => (this.loading = false));
+    },
+    discardPlayer() {
+      this.$store.dispatch("discardPlayer");
+      this.playerToSearch = "";
     }
   },
   computed: {
@@ -116,3 +128,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.input-guide {
+  font-size: 0.85rem;
+}
+</style>

@@ -1,23 +1,20 @@
 <template>
   <v-container>
-    <v-row class="text-center">
-      <v-col xs="12" xl="6" offset-xl="3">
-        <v-card outlined>
-          <v-card-text>
-            BalancedKD score is <span class="small-highlight">{{ countScore }}</span>
-          </v-card-text>
-            <div class="verdict">{{ verdict }}</div>
-          <v-rating
-            :value="countRating"
-            color="yellow darken-3"
-            background-color="grey darken-1"
-            half-increments
-            readonly
-            x-large
-          ></v-rating>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-card outlined>
+      <v-card-text>
+        BalancedKD score is
+        <span class="small-highlight">{{ countScore }}</span>
+      </v-card-text>
+      <div class="verdict" v-bind:style="{ color: verdictColor }">{{ verdict }}</div>
+      <v-rating
+        :value="countRating"
+        color="#d7be69"
+        background-color="grey darken-1"
+        half-increments
+        readonly
+        x-large
+      ></v-rating>
+    </v-card>
   </v-container>
 </template>
 
@@ -47,6 +44,22 @@ export default {
         return "Poor";
       } else {
         return "Horrible";
+      }
+    },
+    verdictColor() {
+      const score = this.countScore;
+      if (score > 2999) {
+        return "lawngreen";
+      } else if (score > 1999) {
+        return "lightgreen";
+      } else if (score > 1499) {
+        return "lightskyblue";
+      } else if (score > 999) {
+        return "#dde2a1";
+      } else if (score > 799) {
+        return "lightcoral";
+      } else {
+        return "orangered";
       }
     }
   }

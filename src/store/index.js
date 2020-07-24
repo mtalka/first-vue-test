@@ -13,6 +13,10 @@ export default new Vuex.Store({
     UPDATE_PLAYER(state, data) {
       state.player = data.player;
       state.matches = data.matches;
+    },
+    DISCARD_PLAYER(state) {
+      state.player = {};
+      state.matches = [];
     }
   },
   actions: {
@@ -28,6 +32,9 @@ export default new Vuex.Store({
             throw new Error(`API ${error}`);
           });
       })
+    },
+    discardPlayer({ commit }) {
+      commit("DISCARD_PLAYER");
     }
   },
   modules: {}

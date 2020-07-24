@@ -9,13 +9,13 @@ theme: {
     dark: true,
     themes: {
       light: {
-        primary: colors.blue.lighten1,
+        primary: colors.grey.darken3,
         secondary: colors.grey.darken1,
         accent: colors.shades.black,
         error: colors.red.accent3
       },
       dark: {
-        primary: colors.blue.darken1,
+        primary: colors.grey.darken2,
       }
     }
   }

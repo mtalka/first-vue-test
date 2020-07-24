@@ -39,16 +39,6 @@
         </div>
       </v-col>
     </v-row>
-    <v-row class="text-center">
-      <v-col>
-        <v-switch
-          v-model="$vuetify.theme.dark"
-          hide-details
-          inset
-          label="dark theme"
-        ></v-switch>
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 
