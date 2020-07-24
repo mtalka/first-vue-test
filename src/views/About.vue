@@ -5,9 +5,7 @@
         <h3>You aren't as bad as your worst day.</h3>
         <h4>(Nor as good as your best day.)</h4>
         <div class="explanation">
-          All players sometimes have off games. Sometimes your enemies or teammates are trolling, throwing, griefing or smurfing.
-        </div>
-        <div class="explanation">
+          All players sometimes have off games. Sometimes your enemies or teammates are trolling, throwing, griefing or smurfing. 
           Such games hardly represent your true skill. In order to filter out
           these games, we exclude the bottom ten percent of games and the top
           ten percent of games based on kill / death average.
@@ -37,6 +35,9 @@
             width="400"
           />
         </div>
+        <div class="disclaimer">
+          {{ new Date().getFullYear() }} M. Talka — BalancedKD.com is not affiliated with FaceIt.
+        </div>
       </v-col>
     </v-row>
   </v-container>
@@ -53,5 +54,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.disclaimer {
+  font-size: .5rem;
 }
 </style>

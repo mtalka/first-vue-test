@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app flat color="primary" dark>
+    <v-app-bar app flat :color="appBarColor"  dark>
       <router-link to="/">
         <div class="d-flex align-center">
           <!-- <v-img
@@ -58,6 +58,9 @@ export default {
       } else {
         return "/";
       }
+    },
+    appBarColor() {
+      return this.$vuetify.theme.dark ? "black" : "primary";
     }
   },
   methods: {

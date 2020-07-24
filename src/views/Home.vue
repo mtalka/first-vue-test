@@ -62,6 +62,7 @@
 import AverageKd from "@/components/AverageKd";
 import BalancedRating from "@/components/BalancedRating";
 import AdditionalStats from "@/components/AdditionalStats";
+import axios from "axios";
 
 export default {
   name: "Home",
@@ -82,12 +83,18 @@ export default {
       this.loading = true;
       this.$store
         .dispatch("fetchStats", searchParameter)
+        .then(() => this.insertPlayerLogEntry(searchParameter))
         .catch(() => (this.snackbar = true))
         .finally(() => (this.loading = false));
     },
     discardPlayer() {
       this.$store.dispatch("discardPlayer");
       this.playerToSearch = "";
+    },
+    insertPlayerLogEntry(parameterForEntry) {
+      axios.post("/api/players", {
+        playerName: parameterForEntry
+      });
     }
   },
   computed: {
