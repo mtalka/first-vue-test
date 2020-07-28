@@ -53,14 +53,15 @@
       class="data-table text-center"
       v-if="!$store.state.player.playerName && loading === false"
     >
-      <v-col cols="12" xl="3" offset-xl="3">
-        <span>Most searched</span>
+      <v-col cols="12" lg="6" xl="3" offset-xl="3">
+        <h3 class="data-grid-title">Most searched</h3>
         <v-data-table
           :headers="top10headers"
           :items="top10"
           mobile-breakpoint="0"
           hide-default-footer
-          class="elevation-1"
+          class="elevation-1 pointer"
+          @click:row="searchPlayer($event.playerName)"
         >
           <template v-slot:item.rating="{ item }">
             <v-rating
@@ -68,20 +69,22 @@
               color="#d7be69"
               background-color="grey darken-1"
               half-increments
+              small
               dense
               readonly
             ></v-rating>
           </template>
         </v-data-table>
       </v-col>
-      <v-col cols="12" xl="3">
-        <span>Latest searches</span>
+      <v-col cols="12" lg="6" xl="3">
+        <h3 class="data-grid-title">Latest searches</h3>
         <v-data-table
           :headers="latestHeaders"
           :items="latest"
           mobile-breakpoint="0"
           hide-default-footer
-          class="elevation-1"
+          class="elevation-1 pointer"
+          @click:row="searchPlayer($event.playerName)"
         >
           <template v-slot:item.rating="{ item }">
             <v-rating
@@ -89,6 +92,7 @@
               color="#d7be69"
               background-color="grey darken-1"
               half-increments
+              small
               dense
               readonly
             ></v-rating>
@@ -126,30 +130,31 @@ export default {
     top10: [],
     latest: [],
     top10headers: [
-      { text: "Name", value: "playerName" },
-      { text: "BalancedKD score", value: "balancedKDscore" },
-      { text: "BalancedKD score", value: "rating", align: "right" }
+      { text: "Name", value: "playerName", sortable: false },
+      { text: "BalancedKD score", value: "balancedKDscore", sortable: false },
+      { text: "Rating", value: "rating", align: "right", sortable: false }
     ],
     latestHeaders: [
-      { text: "Name", value: "playerName" },
-      { text: "BalancedKD score", value: "balancedKDscore" },
-      { text: "BalancedKD score", value: "rating", align: "right" }
+      { text: "Name", value: "playerName", sortable: false },
+      { text: "BalancedKD score", value: "balancedKDscore", sortable: false },
+      { text: "Rating", value: "rating", align: "right", sortable: false }
     ]
   }),
   mounted() {
     axios
-      .get("http://localhost:3000/api/players/latest")
+      .get("/api/players/latest")
       .then(result => (this.latest = result.data));
-    axios
-      .get("http://localhost:3000/api/players/top10")
-      .then(result => (this.top10 = result.data));
+    axios.get("/api/players/top10").then(result => (this.top10 = result.data));
   },
   methods: {
     searchPlayer(searchParameter) {
       this.loading = true;
       this.$store
         .dispatch("fetchStats", searchParameter)
-        .then(() => this.insertPlayerLogEntry(searchParameter))
+        .then(() => {
+          this.insertPlayerLogEntry(searchParameter);
+          this.scrollToTop();
+        })
         .catch(() => (this.snackbar = true))
         .finally(() => (this.loading = false));
     },
@@ -162,7 +167,7 @@ export default {
       const balancedKDscore = (
         Number(this.eloAvg) * Number(this.kdAvg)
       ).toFixed(0);
-      axios.put("http://localhost:3000/api/players", {
+      axios.put("/api/players", {
         playerName: parameterForEntry,
         totalKDratio: this.$store.state.player.totalKdAvg,
         balancedKDratio: balancedKdAvg,
@@ -171,6 +176,13 @@ export default {
     },
     countRating(item) {
       return Number(item.balancedKDscore) / 400;
+    },
+    scrollToTop() {
+      window.scroll({
+        top: 0,
+        left: 0,
+        behavior: "smooth"
+      });
     }
   },
   computed: {
@@ -215,5 +227,11 @@ export default {
 <style scoped>
 .input-guide {
   font-size: 0.85rem;
+}
+.data-grid-title {
+  margin-bottom: 1rem;
+}
+.pointer {
+  cursor: pointer;
 }
 </style>
