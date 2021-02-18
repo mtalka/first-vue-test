@@ -1,19 +1,20 @@
 <template>
   <v-container>
     <v-card outlined>
-      <v-card-text>
-        BalancedKD score is
-        <span class="small-highlight">{{ countScore }}</span>
-      </v-card-text>
-      <div class="verdict" v-bind:style="{ color: verdictColor }">{{ verdict }}</div>
+      <div class="verdict" v-bind:style="{ color: verdictColor }">Balanced {{ verdict }}</div>
       <v-rating
         :value="countRating"
         color="#d7be69"
         background-color="grey darken-1"
-        half-increments
         readonly
-        x-large
+        half-increments
+        length="5"
       ></v-rating>
+      <v-card-text>
+        Player can consistently achieve a 
+      <span class="small-highlight">K/D ratio of 1</span> in a game with an average ELO of
+      </v-card-text>
+      <div class="count-score">{{ countScore }}</div>
     </v-card>
   </v-container>
 </template>
@@ -25,7 +26,28 @@ export default {
   data: () => ({}),
   computed: {
     countRating() {
-      return (Number(this.eloAverage) * Number(this.kdAverage)) / 400;
+      const score = this.countScore;
+      if (score > 2999) {
+        return 5;
+      } else if (score > 1850) {
+        return 4.5;
+      } else if (score > 1700) {
+        return 4;
+      } else if (score > 1550) {
+        return 3.5;
+      } else if (score > 1400) {
+        return 3;
+      } else if (score > 1250) {
+        return 2.5;
+      } else if (score > 1100) {
+        return 2;
+      } else if (score > 950) {
+        return 1.5;
+      } else if (score > 800) {
+        return 1;
+      } else {
+        return 0;
+      }
     },
     countScore() {
       return (Number(this.eloAverage) * Number(this.kdAverage)).toFixed(0);
@@ -33,33 +55,39 @@ export default {
     verdict() {
       const score = this.countScore;
       if (score > 2999) {
-        return "Perfect";
-      } else if (score > 1999) {
-        return "Excellent";
-      } else if (score > 1499) {
-        return "Good";
-      } else if (score > 999) {
-        return "Fair";
-      } else if (score > 799) {
-        return "Poor";
+        return "level 10";
+      } else if (score > 1850) {
+        return "level 9";
+      } else if (score > 1700) {
+        return "level 8";
+      } else if (score > 1550) {
+        return "level 7";
+      } else if (score > 1400) {
+        return "level 5";
+      } else if (score > 1250) {
+        return "level 5";
+      } else if (score > 1100) {
+        return "level 4";
+      } else if (score > 950) {
+        return "level 3";
+      } else if (score > 800) {
+        return "level 2";
       } else {
-        return "Horrible";
+        return "level 1";
       }
     },
     verdictColor() {
       const score = this.countScore;
-      if (score > 2999) {
-        return "lawngreen";
-      } else if (score > 1999) {
-        return "lightgreen";
-      } else if (score > 1499) {
-        return "lightskyblue";
-      } else if (score > 999) {
-        return "#dde2a1";
-      } else if (score > 799) {
-        return "lightcoral";
-      } else {
+      if (score > 2000) {
+        return "red";
+      } else if (score > 1700) {
         return "orangered";
+      } else if (score > 1100) {
+        return "gold";
+      } else if (score > 800) {
+        return "limegreen";
+      } else {
+        return "grey";
       }
     }
   }
@@ -74,5 +102,11 @@ export default {
 .verdict {
   font-weight: 600;
   font-size: 1.5rem;
+  margin-top: 2rem;
+}
+
+.count-score {
+  font-weight: 600;
+  font-size: 10rem;
 }
 </style>

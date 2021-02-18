@@ -35,13 +35,13 @@
       <v-row dense class="text-center">
         <v-col xs="12" xl="6" offset-xl="3">
           <h1>{{ $store.state.player.playerName }}</h1>
-          <BalancedRating v-bind:kdAverage="kdAvg" v-bind:eloAverage="eloAvg" />
           <AverageKd
             v-bind:kdAverage="kdAvg"
             v-bind:matchCount="matchCount"
             v-bind:playerName="$store.state.player.playerName"
             v-bind:eloAvg="eloAvg"
           />
+          <BalancedRating v-bind:kdAverage="kdAvg" v-bind:eloAverage="eloAvg" />
           <AdditionalStats />
         </v-col>
       </v-row>
@@ -73,6 +73,7 @@
               dense
               readonly
             ></v-rating>
+            <span class="verdict">Level </span><span class="verdict" v-bind:style="{ color: verdictColor(item) }">{{verdict(item)}}</span>
           </template>
         </v-data-table>
       </v-col>
@@ -96,6 +97,7 @@
               dense
               readonly
             ></v-rating>
+            <span class="verdict">Level </span><span class="verdict" v-bind:style="{ color: verdictColor(item) }">{{verdict(item)}}</span>
           </template>
         </v-data-table>
       </v-col>
@@ -131,13 +133,13 @@ export default {
     latest: [],
     top10headers: [
       { text: "Name", value: "playerName", sortable: false },
-      { text: "BalancedKD score", value: "balancedKDscore", sortable: false },
-      { text: "Rating", value: "rating", align: "right", sortable: false }
+      { text: "1 K/D ELO Avg.", value: "balancedKDscore", sortable: false },
+      { text: "Balanced level", value: "rating", align: "right", sortable: false }
     ],
     latestHeaders: [
       { text: "Name", value: "playerName", sortable: false },
-      { text: "BalancedKD score", value: "balancedKDscore", sortable: false },
-      { text: "Rating", value: "rating", align: "right", sortable: false }
+      { text: "1 K/D ELO Avg.", value: "balancedKDscore", sortable: false },
+      { text: "Balanced level", value: "rating", align: "right", sortable: false }
     ]
   }),
   mounted() {
@@ -174,8 +176,66 @@ export default {
         balancedKDscore: balancedKDscore
       });
     },
+    verdict(item) {
+      const score = Number(item.balancedKDscore);
+      if (score > 2999) {
+        return "10";
+      } else if (score > 1850) {
+        return "9";
+      } else if (score > 1700) {
+        return "8";
+      } else if (score > 1550) {
+        return "7";
+      } else if (score > 1400) {
+        return "5";
+      } else if (score > 1250) {
+        return "5";
+      } else if (score > 1100) {
+        return "4";
+      } else if (score > 950) {
+        return "3";
+      } else if (score > 800) {
+        return "2";
+      } else {
+        return "1";
+      }
+    },
     countRating(item) {
-      return Number(item.balancedKDscore) / 400;
+      if (Number(item.balancedKDscore) > 2999) {
+        return 5;
+      } else if (Number(item.balancedKDscore) > 1850) {
+        return 4.5;
+      } else if (Number(item.balancedKDscore) > 1700) {
+        return 4;
+      } else if (Number(item.balancedKDscore) > 1550) {
+        return 3.5;
+      } else if (Number(item.balancedKDscore) > 1400) {
+        return 3;
+      } else if (Number(item.balancedKDscore) > 1250) {
+        return 2.5;
+      } else if (Number(item.balancedKDscore) > 1100) {
+        return 2;
+      } else if (Number(item.balancedKDscore) > 950) {
+        return 1.5;
+      } else if (Number(item.balancedKDscore) > 800) {
+        return 1;
+      } else {
+        return 0;
+      }
+    },
+    verdictColor(item) {
+      const score = Number(item.balancedKDscore);
+      if (score > 2000) {
+        return "red";
+      } else if (score > 1700) {
+        return "orangered";
+      } else if (score > 1100) {
+        return "gold";
+      } else if (score > 800) {
+        return "limegreen";
+      } else {
+        return "grey";
+      }
     },
     scrollToTop() {
       window.scroll({
@@ -233,5 +293,8 @@ export default {
 }
 .pointer {
   cursor: pointer;
+}
+.verdict {
+  font-size: .7rem;
 }
 </style>

@@ -2,7 +2,7 @@
   <v-container>
     <v-card outlined>
       <v-card-text>
-        <span class="small-highlight">{{ playerName }}</span> balanced K/D ratio
+        <span class="small-highlight">{{ playerName }}</span> balanced K/D ratio (with outliers removed)
       </v-card-text>
       <div class="kd">{{ kdAverage }}</div>
       <v-card-text>
@@ -28,6 +28,6 @@ export default {
 }
 .kd {
   font-weight: 600;
-  font-size: 10rem;
+  font-size: 3rem;
 }
 </style>
